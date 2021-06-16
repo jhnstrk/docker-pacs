@@ -1,4 +1,4 @@
-FROM ubuntu:20.04@sha256:adf73ca014822ad8237623d388cedf4d5346aa72c270c5acc01431cc93e18e2d
+FROM ubuntu:20.04@sha256:adf73ca014822ad8237623d388cedf4d5346aa72c270c5acc01431cc93e18e2d AS builder
 
 RUN apt-get update && \
     apt-get install -y zip
@@ -9,7 +9,6 @@ RUN  \
     cd /opt && \
     unzip /tmp/jboss.zip && \
     rm /tmp/jboss.zip
-
 
 COPY assets/dcm4chee-2.18.3-psql.zip  /tmp/dcm4chee.zip
 COPY assets/dcm4chee-2.18.1-psql.zip  /tmp/dcm4chee-ref.zip
@@ -30,7 +29,8 @@ RUN chmod 755 /tmp/jdk.bin && \
     cd /opt && \
     /tmp/jdk.bin && \
     mv jdk1.6.0* jdk1.6.0 && \
-    ln -s /opt/jdk1.6.0/bin/java /usr/bin/java
+    ln -s /opt/jdk1.6.0/bin/java /usr/bin/java && \
+    rm /tmp/jdk.bin
 
 COPY assets/libclib_jiio-1.2-b04-linux-x86-64.so \
     /opt/dcm4chee/bin/native/libclib_jiio.so
@@ -38,7 +38,11 @@ COPY assets/libclib_jiio-1.2-b04-linux-x86-64.so \
 RUN cd /opt/dcm4chee/bin && \
    ./install_jboss.sh /opt/jboss-4.2.3.GA/
 
-RUN apt-get -y install postgresql-client
+FROM ubuntu:20.04@sha256:adf73ca014822ad8237623d388cedf4d5346aa72c270c5acc01431cc93e18e2d
+
+COPY --from=builder /opt/dcm4chee /opt/dcm4chee
+COPY --from=builder /opt/jdk1.6.0 /opt/jdk1.6.0
+RUN  ln -s /opt/jdk1.6.0/bin/java /usr/bin/java
 
 RUN sed -i -e "s/PostgreSQL 7.2/PostgreSQL/" \
     -e 's/jdbc:postgresql:\/\/localhost\/pacsdb/jdbc:postgresql:\/\/db\/pacsdb?user=pacsuser\&amp;password=pacspassword/' \
