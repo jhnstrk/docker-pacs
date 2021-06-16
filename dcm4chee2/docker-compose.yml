@@ -1,0 +1,48 @@
+# Use postgres/example user/password credentials
+version: '3.1'
+
+services:
+
+  db:
+    image: postgres:9.6.22
+    restart: always
+    environment:
+      POSTGRES_USER: pacsuser
+      POSTGRES_PASSWORD: pacspassword
+      POSTGRES_DB: pacsdb
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  dcm4chee2-init:
+    image: dcm4chee2:test
+    profiles: ["init"]
+    # restart: always
+    depends_on: 
+      db:
+        condition: service_healthy
+    #ports:
+    #  - "8080:8080"
+    environment:
+      PGHOST: db
+      PGUSER: pacsuser
+      PGPASSWORD: pacspassword
+    command: psql -f /opt/dcm4chee/sql/create.psql  pacsdb
+
+  dcm4chee2:
+    image: dcm4chee2:test
+    # restart: always
+    depends_on: 
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      PGHOST: db
+      PGUSER: pacsuser
+      PGPASSWORD: pacspassword
+    # command: /bin/bash
+
+    
