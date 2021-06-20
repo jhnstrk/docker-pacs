@@ -1,0 +1,13 @@
+# Use postgres/example user/password credentials
+version: '3.1'
+
+services:
+
+  conquest:
+    image: conquest/pacs:latest
+    # restart: always
+    ports:
+      - "8080:80"
+      - "5678:5678"
+    # command: /bin/bash
+
