@@ -63,6 +63,7 @@ RUN apt-get update && \
     lua-socket \
     php libapache2-mod-php \
     php-sqlite3 \
+    supervisor \
     && rm -rf /var/lib/apt/lists/*
 
 RUN a2enmod cgi
@@ -89,8 +90,9 @@ RUN a2ensite dgate
 EXPOSE 80 5678
 
 COPY ./startConquest.sh /opt/conquest/startConquest.sh
-RUN chmod +x /opt/conquest/startConquest.sh
+COPY ./supervisord.conf /opt/conquest/supervisord.conf
+COPY ./supervisor-exit-event-listener  /usr/local/bin/supervisor-exit-event-listener
 
 # Start apache and ConQuest
 # The server should then be running and localhost/cgi-bin/dgate should provide a working web interface.
-CMD ["/startConquest.sh"]
+CMD ["startConquest.sh"]
