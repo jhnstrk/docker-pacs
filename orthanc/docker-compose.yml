@@ -1,0 +1,53 @@
+
+version: "2"
+services:
+  orthanc:
+    image: osimis/orthanc:22.2.2
+    depends_on:
+      - orthanc-index
+    restart: unless-stopped
+    ports: 
+      - "4242:4242"
+      - "8042:8042"
+    volumes:
+      - orthanc-storage:/var/lib/orthanc/db
+      - type: bind
+        source: ./orthanc.json
+        target: /etc/orthanc/orthanc.json
+    environment:
+      VERBOSE_STARTUP: "true"
+      VERBOSE_ENABLED: "true"
+
+      POSTGRESQL_PLUGIN_ENABLED: "true"
+
+      # Enable the StoneViewer and the DicomWeb plugins
+      STONE_WEB_VIEWER_PLUGIN_ENABLED: "true"
+      DICOM_WEB_PLUGIN_ENABLED: "true"
+
+      # StoneViewer configurations
+      ORTHANC__STONE_WEB_VIEWER__DATE_FORMAT: "DD/MM/YYYY"
+
+      OSIMIS_WEB_VIEWER1_PLUGIN_ENABLED: "true"
+
+      ORTHANC__REGISTERED_USERS: |
+        {"demo": "demo"}
+
+    networks:
+      - orthanc_net
+
+  orthanc-index:
+    image: postgres:11
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - orthanc-index:/var/lib/postgresql/data
+    networks:
+      - orthanc_net
+
+volumes:
+  orthanc-storage:
+  orthanc-index:
+
+networks:
+  orthanc_net:
