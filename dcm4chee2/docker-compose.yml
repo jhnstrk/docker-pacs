@@ -34,6 +34,9 @@ services:
         condition: service_healthy
     ports:
       - "8080:8080"
+      - "8443:8443"
+      - "11112:11112"
+      - "2575:2575"
     environment:
       PGHOST: db
       PGUSER: pacsuser
