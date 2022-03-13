@@ -1,4 +1,4 @@
-FROM postgres:9.6.22 AS builder
+FROM postgres:11 AS builder
 
 RUN apt-get update && \
     apt-get install -y zip && \
@@ -12,7 +12,7 @@ RUN  \
     mv dcm4chee-2* dcm4chee && \
     rm /tmp/dcm4chee.zip
 
-FROM postgres:9.6.22
+FROM postgres:11
 
 ENV POSTGRES_USER pacsuser
 ENV POSTGRES_PASSWORD pacspassword

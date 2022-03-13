@@ -38,6 +38,10 @@ COPY assets/libclib_jiio-1.2-b04-linux-x86-64.so \
 RUN cd /opt/dcm4chee/bin && \
    ./install_jboss.sh /opt/jboss-4.2.3.GA/
 
+# Update JDBC for Postgres
+RUN rm -v /opt/dcm4chee/server/default/lib/postgresql-*.jar
+COPY assets/postgresql-42.2.25.jre6.jar /opt/dcm4chee/server/default/lib/
+
 FROM ubuntu:20.04@sha256:adf73ca014822ad8237623d388cedf4d5346aa72c270c5acc01431cc93e18e2d
 
 COPY --from=builder /opt/dcm4chee /opt/dcm4chee
