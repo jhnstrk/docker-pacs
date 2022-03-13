@@ -7,14 +7,24 @@ services:
     image: dcm4chee2/db:latest
     restart: always
     environment:
-      POSTGRES_USER: pacsuser
-      POSTGRES_PASSWORD: pacspassword
-      POSTGRES_DB: pacsdb
+      # postgres 'superuser' credentials.
+      # Needed for DB creation
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+      # Credentials used by DCM4Chee
+      PG_PACS_USER: pacsuser
+      PG_PACS_PASSWORD: pacspassword
     healthcheck:
       test: ["CMD-SHELL", "pg_isready --username=pacsuser --dbname=pacsdb"]
       interval: 10s
       timeout: 5s
       retries: 5
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data 
+    networks:
+      - dcm4chee_net
 
   dcm4chee2:
     image: dcm4chee2/pacs:latest
@@ -29,5 +39,11 @@ services:
       PGUSER: pacsuser
       PGPASSWORD: pacspassword
     # command: /bin/bash
+    networks:
+      - dcm4chee_net
 
-    
+volumes:
+  postgres_data:
+
+networks:
+  dcm4chee_net:

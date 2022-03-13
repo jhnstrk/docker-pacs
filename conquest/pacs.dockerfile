@@ -1,9 +1,8 @@
 FROM ubuntu:20.04@sha256:adf73ca014822ad8237623d388cedf4d5346aa72c270c5acc01431cc93e18e2d AS builder
 
-# Prevent timezone (tzdata) prompts
-ARG DEBIAN_FRONTEND=noninteractive
-
 RUN apt-get update && \
+    # Prevent timezone (tzdata) prompts
+    DEBIAN_FRONTEND=noninteractive  \
     apt-get install -y zip \
     build-essential \
     gettext-base \
@@ -51,10 +50,9 @@ RUN ls -fs dgate /usr/lib/cgi-bin/dgate.exe
 
 FROM ubuntu:20.04@sha256:adf73ca014822ad8237623d388cedf4d5346aa72c270c5acc01431cc93e18e2d
 
-# Prevent timezone (tzdata) prompts
-ARG DEBIAN_FRONTEND=noninteractive
-
 RUN apt-get update && \
+    # Prevent timezone (tzdata) prompts
+    DEBIAN_FRONTEND=noninteractive  \
     apt-get install -y \
     apache2 \
     p7zip-full \
