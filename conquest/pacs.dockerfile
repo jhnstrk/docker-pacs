@@ -54,6 +54,7 @@ RUN apt-get update && \
     # Prevent timezone (tzdata) prompts
     DEBIAN_FRONTEND=noninteractive  \
     apt-get install -y \
+    --no-install-recommends \
     apache2 \
     p7zip-full \
     liblua5.1-0 \
