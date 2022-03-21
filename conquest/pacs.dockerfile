@@ -11,6 +11,7 @@ RUN apt-get update && \
     apache2 \
     p7zip-full \
     liblua5.1-0 \
+    libpq-dev \
     lua5.1 \
     lua5.1-dev \
     lua-socket
@@ -27,7 +28,7 @@ WORKDIR /opt/conquest
 RUN mkdir -p /usr/local/man/man1
 
 RUN chmod 755 ./maklinux && \
-    /bin/echo -e '3\ny\nn\n\n' | ./maklinux
+     /bin/echo -e '2\nn\nn\n\n' | ./maklinux
 
 # Please choose DB type
 # 1) mariadb
@@ -53,8 +54,11 @@ RUN apt-get update && \
     apt-get install -y \
     --no-install-recommends \
     apache2 \
+    # For envsubst:
+    gettext-base \
     p7zip-full \
     liblua5.1-0 \
+    libpq5 \
     lua5.1 \
     lua-socket \
     php libapache2-mod-php \
@@ -80,6 +84,16 @@ COPY apache_dgate.conf /etc/apache2/sites-available/dgate.conf
 RUN a2enmod rewrite
 RUN a2dissite 000-default
 RUN a2ensite dgate
+
+# Make more items configurable
+RUN cp -iv ./linux/conf/dicom.ini.postgres ./dicom.ini.template && \
+    sed -i \
+    -e 's/^\(MyACRNema\)\s*=.*/\1 = \$CONQUEST_AETITLE/' \
+    -e 's/^\(SQLHost\)\s*=.*/\1 = \$PG_CONQUEST_HOST/' \
+    -e 's/^\(SQLServer\)\s*=.*/\1 = \$PG_CONQUEST_DATABASE/' \
+    -e 's/^\(Username\)\s*=.*/\1 = \$PG_CONQUEST_USER/' \
+    -e 's/^\(Password\)\s*=.*/\1 = \$PG_CONQUEST_PASSWORD/' \
+    ./dicom.ini.template
 
 # Expose port 80 (http) and 5678 (for DICOM query/retrieve/send)
 EXPOSE 80 5678

@@ -3,6 +3,30 @@ version: '3.1'
 
 services:
 
+  db:
+    image: conquest/db:latest
+    restart: always
+    environment:
+      # postgres 'superuser' credentials.
+      # Needed for DB creation
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+      # Credentials used by Conquest
+      PG_CONQUEST_USER: conquest
+      PG_CONQUEST_PASSWORD: pacspassword
+      PG_CONQUEST_DATABASE: conquestdb
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready --username=$$POSTGRES_USER --dbname=$$PG_CONQUEST_DATABASE"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
+    volumes:
+      - conquest_postgres_data:/var/lib/postgresql/data 
+    networks:
+      - conquest_net
+  
   conquest:
     image: conquest/pacs:latest
     # restart: always
@@ -10,4 +34,22 @@ services:
       - "8080:80"
       - "5678:5678"
     # command: /bin/bash
+    environment:
+      # Credentials used by Conquest
+      PG_CONQUEST_HOST: db
+      PG_CONQUEST_USER: conquest
+      PG_CONQUEST_PASSWORD: pacspassword
+      PG_CONQUEST_DATABASE: conquestdb
+      # Set once to initialize the DB then unset it.
+      # INIT_DATABASE: "TRUE"
+    volumes:
+      - conquest_data:/opt/conquest/data 
+    networks:
+      - conquest_net
 
+volumes:
+  conquest_postgres_data:
+  conquest_data:
+
+networks:
+  conquest_net:
