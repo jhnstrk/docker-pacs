@@ -11,8 +11,8 @@ def main():
     while True:
         headers, payload = childutils.listener.wait()
         childutils.listener.ok()
-        if headers['eventname'] != 'PROCESS_STATE_FATAL':
-            continue
+        # if headers['eventname'] != 'PROCESS_STATE_FATAL':
+        #     continue
         os.kill(os.getppid(), signal.SIGTERM)
 
 if __name__ == "__main__":

@@ -11,6 +11,7 @@ RUN apt-get update && \
     apache2 \
     p7zip-full \
     liblua5.1-0 \
+    libpq-dev \
     lua5.1 \
     lua5.1-dev \
     lua-socket
@@ -27,7 +28,7 @@ WORKDIR /opt/conquest
 RUN mkdir -p /usr/local/man/man1
 
 RUN chmod 755 ./maklinux && \
-    /bin/echo -e '3\ny\nn\n\n' | ./maklinux
+     /bin/echo -e '2\nn\nn\n\n' | ./maklinux
 
 # Please choose DB type
 # 1) mariadb
@@ -55,6 +56,7 @@ RUN apt-get update && \
     apache2 \
     p7zip-full \
     liblua5.1-0 \
+    libpq5 \
     lua5.1 \
     lua-socket \
     php libapache2-mod-php \
