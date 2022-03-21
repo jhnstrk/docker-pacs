@@ -15,9 +15,6 @@ RUN apt-get update && \
     lua5.1-dev \
     lua-socket
 
-RUN a2enmod cgi
-RUN service apache2 restart
-
 COPY assets/dicomserver150b.zip  /tmp/dicomserver.zip
 
 RUN  mkdir /opt/conquest && \
