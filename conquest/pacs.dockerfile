@@ -85,26 +85,18 @@ RUN a2enmod rewrite
 RUN a2dissite 000-default
 RUN a2ensite dgate
 
-# Make more items configurable
-RUN cp -iv ./linux/conf/dicom.ini.postgres ./dicom.ini.template && \
-    sed -i \
-    -e 's/^\(MyACRNema\)\s*=.*/\1 = \$CONQUEST_AETITLE/' \
-    -e 's/^\(SQLHost\)\s*=.*/\1 = \$PG_CONQUEST_HOST/' \
-    -e 's/^\(SQLServer\)\s*=.*/\1 = \$PG_CONQUEST_DATABASE/' \
-    -e 's/^\(Username\)\s*=.*/\1 = \$PG_CONQUEST_USER/' \
-    -e 's/^\(Password\)\s*=.*/\1 = \$PG_CONQUEST_PASSWORD/' \
-    ./dicom.ini.template
-
 # Expose port 80 (http) and 5678 (for DICOM query/retrieve/send)
 EXPOSE 80 5678
 
-COPY ./startConquest.sh /opt/conquest/startConquest.sh
-COPY ./supervisord.conf /opt/conquest/supervisord.conf
+WORKDIR /opt/conquest
+COPY ./startConquest.sh ./startConquest.sh
+COPY ./supervisord.conf ./supervisord.conf
+COPY ini_files/dicom.cgi-bin.template.ini ./
+COPY ini_files/dicom.template.ini ./
+COPY ini_files/dicom.newweb.template.ini ./
 COPY ./supervisor-exit-event-listener  /usr/local/bin/supervisor-exit-event-listener
 
 ENV LANG=C.UTF-8
-
-WORKDIR /opt/conquest
 
 # Start apache and ConQuest
 # The server should then be running and localhost/cgi-bin/dgate should provide a working web interface.
