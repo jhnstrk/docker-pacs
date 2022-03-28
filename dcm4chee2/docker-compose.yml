@@ -20,9 +20,9 @@ services:
       timeout: 5s
       retries: 5
     ports:
-      - "5432:5432"
+      - "15432:5432"
     volumes:
-      - postgres_data: /var/lib/postgresql/data 
+      - postgres_data:/var/lib/postgresql/data 
     networks:
       - dcm4chee_net
 
@@ -43,7 +43,7 @@ services:
       PGPASSWORD: pacspassword
     # command: /bin/bash
     volumes:
-     - dcm4chee_data: /opt/dcm4chee/server/default/archive
+     - dcm4chee_data:/opt/dcm4chee/server/default/archive
     networks:
       - dcm4chee_net
 
