@@ -22,7 +22,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data 
+      - postgres_data: /var/lib/postgresql/data 
     networks:
       - dcm4chee_net
 
@@ -42,11 +42,14 @@ services:
       PGUSER: pacsuser
       PGPASSWORD: pacspassword
     # command: /bin/bash
+    volumes:
+     - dcm4chee_data: /opt/dcm4chee/server/default/archive
     networks:
       - dcm4chee_net
 
 volumes:
   postgres_data:
+  dcm4chee_data:
 
 networks:
   dcm4chee_net:
