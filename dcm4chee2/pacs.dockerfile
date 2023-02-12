@@ -3,7 +3,7 @@ FROM ubuntu:20.04@sha256:adf73ca014822ad8237623d388cedf4d5346aa72c270c5acc01431c
 RUN apt-get update && \
     apt-get install -y \
     --no-install-recommends \
-    zip
+    unzip
 
 COPY assets/jboss-4.2.3.GA-jdk6.zip  /tmp/jboss.zip
 

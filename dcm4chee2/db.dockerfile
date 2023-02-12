@@ -1,7 +1,9 @@
-FROM postgres:11 AS builder
+FROM ubuntu:20.04 AS builder
 
 RUN apt-get update && \
-    apt-get install -y zip && \
+    apt-get install -y \
+    --no-install-recommends \
+    unzip && \
     rm -rf /var/lib/apt/lists/*
 
 COPY assets/dcm4chee-2.18.3-psql.zip  /tmp/dcm4chee.zip
